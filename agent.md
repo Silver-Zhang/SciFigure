@@ -8,6 +8,7 @@ Related files:
 - `style_guide.md`: visual style memory.
 - `formula_policy.md`: equation handling.
 - `backend_policy.md`: operating-system backend selection.
+- `workflow_details.md`: expanded execution loop and review gates.
 
 ## Roles
 
