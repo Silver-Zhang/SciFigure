@@ -2,14 +2,41 @@
 
 SciFigure is a multi-agent workflow for generating editable scientific PowerPoint figures from a reference sketch, a style example, and user requirements.
 
-The project is designed for research figures used in proposals, academic talks, thesis reports, and paper illustrations. It emphasizes scientific correctness, editable PowerPoint structure, controlled use of generated image assets, formula handling, and iterative human review.
+The project is designed for research figures used in proposals, academic talks, thesis reports, and paper illustrations. It emphasizes scientific correctness, editable PowerPoint structure, controlled image assets, formula handling, and iterative human review.
 
-## Core idea
+## Current execution layer
 
-A SciFigure task follows this loop:
+The repository now includes a minimal portable Python runtime:
+
+- `scifigure_runtime.py`: builds an editable PPTX skeleton from a task file.
+- `run_demo.py`: runs the bundled demo task.
+- `jobs/demo_task.txt`: example task specification in JSON format.
+- `result/demo/`: default demo output directory generated locally.
+
+Install dependencies:
+
+```bash
+pip install -r requirements.in
+```
+
+Run the demo:
+
+```bash
+python run_demo.py
+```
+
+or run a task directly:
+
+```bash
+python scifigure_runtime.py jobs/demo_task.txt --output-dir result/demo
+```
+
+The Python runtime is the portable fallback backend. It creates editable PowerPoint shapes, text boxes, panels, placeholders, and reports. Native MathType or Office Math insertion is still handled by the platform-specific backend policy.
+
+## Workflow
 
 1. Parse the user's figure request and uploaded reference images.
-2. Write a task specification.
+2. Create a task specification.
 3. Summarize the target visual style.
 4. Decide which elements must be editable PowerPoint objects and which local illustrations may be generated as images.
 5. Select an operating-system-specific backend.
@@ -42,29 +69,7 @@ SciFigure selects a backend according to the current operating system:
 
 See `backend_policy.md` for details.
 
-## Repository structure
-
-```text
-SciFigure/
-├─ agent.md
-├─ background.md
-├─ style_guide.md
-├─ formula_policy.md
-├─ backend_policy.md
-├─ skill.md
-├─ templates/
-├─ components/
-├─ scripts/
-├─ approved_examples/
-├─ tasks/
-├─ assets/
-├─ outputs/
-└─ logs/
-```
-
-## Basic usage
-
-A typical request should provide:
+## Basic request format
 
 ```text
 Task name:
@@ -80,8 +85,6 @@ Output filename:
 Mode: review_mode / auto_mode
 ```
 
-The controlling agent must read `agent.md`, `background.md`, `style_guide.md`, `formula_policy.md`, and `backend_policy.md` before starting.
-
 ## Design principles
 
 - Never export the whole slide as one non-editable image.
@@ -89,7 +92,3 @@ The controlling agent must read `agent.md`, `background.md`, `style_guide.md`, `
 - Use generated images only for local scientific illustrations that are hard to draw cleanly with PowerPoint primitives.
 - Never let an image generation agent create assets before an asset decision table is approved.
 - Prefer clear scientific diagrams over decorative visual effects.
-
-## Status
-
-This repository currently contains the workflow specification, templates, backend policy, and starter component stubs. Implementation components will be expanded iteratively as real figure-generation tasks are added.
