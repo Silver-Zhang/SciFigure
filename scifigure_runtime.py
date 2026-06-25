@@ -2,7 +2,7 @@
 
 This backend creates an editable PPTX skeleton from a JSON task file.
 It is the portable fallback backend for macOS and Linux and can also be
-used on Windows when PowerPoint COM is unavailable.
+used on Windows when PowerPoint automation is unavailable.
 """
 
 from __future__ import annotations
@@ -15,6 +15,7 @@ from typing import Any
 
 try:
     from pptx import Presentation
+    from pptx.dml.color import RGBColor
     from pptx.enum.shapes import MSO_SHAPE
     from pptx.util import Inches, Pt
 except ImportError as exc:  # pragma: no cover
@@ -51,19 +52,23 @@ def add_textbox(slide, text: str, left, top, width, height, size: int = 16, bold
     box = slide.shapes.add_textbox(left, top, width, height)
     tf = box.text_frame
     tf.clear()
+    tf.word_wrap = True
     p = tf.paragraphs[0]
     run = p.add_run()
     run.text = text
     run.font.size = Pt(size)
     run.font.bold = bold
+    run.font.name = "Microsoft YaHei"
+    run.font.color.rgb = RGBColor(8, 45, 95) if bold else RGBColor(35, 45, 55)
     return box
 
 
 def add_panel(slide, title: str, left, top, width, height):
     panel = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
     panel.fill.solid()
-    panel.fill.fore_color.rgb = None
-    panel.line.width = Pt(1.5)
+    panel.fill.fore_color.rgb = RGBColor(255, 255, 255)
+    panel.line.width = Pt(1.3)
+    panel.line.color.rgb = RGBColor(195, 205, 215)
     add_textbox(slide, title, left + Inches(0.15), top + Inches(0.10), width - Inches(0.3), Inches(0.35), 18, True)
     return panel
 
@@ -71,7 +76,9 @@ def add_panel(slide, title: str, left, top, width, height):
 def add_placeholder(slide, text: str, left, top, width, height):
     box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, width, height)
     box.fill.solid()
+    box.fill.fore_color.rgb = RGBColor(245, 247, 250)
     box.line.width = Pt(1)
+    box.line.color.rgb = RGBColor(185, 195, 205)
     add_textbox(slide, text, left + Inches(0.08), top + Inches(0.08), width - Inches(0.16), height - Inches(0.16), 12)
     return box
 
