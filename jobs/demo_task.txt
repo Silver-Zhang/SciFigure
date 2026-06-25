@@ -1,0 +1,7 @@
+{
+  "name": "demo_task",
+  "title": "SciFigure Demo",
+  "subtitle": "Editable scientific figure workflow",
+  "core_logic": "The controller converts a user sketch into an editable PowerPoint figure.",
+  "output_name": "demo_scifigure.pptx"
+}
